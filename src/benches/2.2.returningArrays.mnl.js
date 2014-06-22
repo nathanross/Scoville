@@ -1,4 +1,4 @@
-'use strict';
+
 // Initiating an ASM module with a new heap is costly, so a common ASM pattern is to allocate
 //	a large amount of heap to a module on initialization, and then on demand within ASM dynamically
 //	"allocate" areas of that heap to functions which require a variable amount of heap.
@@ -37,13 +37,19 @@
 //					of padded array given offset of first element.
 //
 
-
 // performance results : for small arrays of about 10 items, where the difference
 //	is among the most pronounced, typeless wins in performance by about 10-12%
 //	over heapview and fheap, with split generally coming in a few points slower
 //	than typeless. In general, I recommend typeless.
 
-function LScore(stdlib, heapKb) {
+//requirements to build:
+// scoville preprocessor to add malloc (and uncomment for different modes)
+// minimalasm sweet.js macros
+//	sweet.js (obviously)
+// require
+
+'use strict';
+function Bench(stdlib) {
     var heap = new ArrayBuffer(4096 * 4096 * 32);
     var l_ = _ASM_LScore(stdlib, {}, heap);
     //l_._initRandom(stdlib);
@@ -56,53 +62,39 @@ function LScore(stdlib, heapKb) {
 	l_.rangeHeapview = function (start, stop, step) {
         var infoLoc = l_._rangeEnvelope(stop === undefined, start, stop, step);
         var arrInfo = new Int32Array(l_._heap, infoLoc, 2);
-        var swe = new Int32Array(l_._heap,arrInfo[0],arrInfo[1] >> 2); //
-        var out= Array.apply([], swe); //
+        var swe = new Int32Array(l_._heap,arrInfo[0],arrInfo[1] >> 2);
+        //=TEST var out= Array.apply([], swe);
         l_._deAllocInfoloc(infoLoc);
-		return out; //
-        //return arrInfo;
+        //=TEST return l_._getRange(out);
     };
     l_.rangeSplit = function (start, stop, step) {
         var bytelength = l_._rangeSplitLength(stop === undefined, start, stop, step);
         var offset = l_._rangeSplit(bytelength, stop === undefined, start, stop, step);
-   		var swe = new Int32Array(l_._heap,offset,bytelength); //
-		var out = Array.apply([],swe); //
+   		var swe = new Int32Array(l_._heap,offset,bytelength); 
+        //=TEST var out= Array.apply([], swe);
         l_._deAllocArr(offset, 4);
-		return out; //
-        //return [
-		//	offset,
-        //    bytelength
-        //];
+        //=TEST return l_._getRange(out);
     };
     l_.rangeFheap = function (start, stop, step) {
         var infoLoc = l_._rangeEnvelope(stop === undefined, start, stop, step);
 		var bytelength = l_._getLength(infoLoc);
         var offset = l_._getOffset(infoLoc);
-		var swe = new Int32Array(l_._heap,offset,bytelength); //
-		var out = Array.apply([],swe); //
+		var swe = new Int32Array(l_._heap,offset,bytelength); 
+        //=TEST var out= Array.apply([], swe);
         l_._deAllocInfoloc(infoLoc);
-       	return out; //
-		//return [
-		//	offset,
-        //    bytelength
-        //];
+        //=TEST return l_._getRange(out);		
     };
     l_.rangeTypeless = function (start, stop, step) {
         var offset = l_._rangeTypeless(stop === undefined, start, stop, step);
         var bytelength = l_._getLengthTypeless(offset);
-		var swe = new Int32Array(l_._heap,offset,bytelength); //
-		var out = Array.apply([],swe); //
+		var swe = new Int32Array(l_._heap,offset,bytelength);
+        //=TEST var out= Array.apply([], swe);
         l_._deAllocTypeless(offset); 
-		return out; //
-		//return [ offset, bytelength ]; 
+        //=TEST return l_._getRange(out);
     };
-    //    l_.overlayUnderscore = function() {	
-    //        window._.random = l_.random;
-    //        window._.range = l._range;
-    //    };
     return l_;
-}
-;
+};
+
 function _ASM_LScore(stdlib, foreign, heap) {
     'use asm';
     var imul = stdlib.Math.imul;
@@ -119,22 +111,21 @@ function _ASM_LScore(stdlib, foreign, heap) {
     var FLOAT32 = 4;
 	var EXTRA_INT32 =2;	//every array gets eight xtra bytes
 						//1st is an i32 of type, 2nd is an i32 of length.
+
     //for now, pretend infinite memory.
-    function _malloc(length, type) {
-        length = length | 0;
-        type = type | 0;
-        var newPos = 0;
-        var oldPos = 0;
+	
+	//%MALLOC%
+    f _malloc(i: length, i: type) {
+        int newPos, oldPos;
         newPos = (cursor | 0) + (imul(length | 0, 4) | 0) | 0;
         oldPos = cursor | 0;
         cursor = newPos | 0;
         return oldPos | 0;
     }
-    function _free(offset, type) {
-        offset = offset | 0;
-        type = type | 0;
+    f _free(i: offset,i: type) {
         return 1;
     }
+	
     /*
   function _rndDbl() {
 		var rMaxDbl = 4294967295.0;  
@@ -159,58 +150,8 @@ function _ASM_LScore(stdlib, foreign, heap) {
 	*/
     //start is optional, step is optional
     //start defaults to 0, step to 1
-    /*
-	function range(nargs, start, stop, step) {
-		nargs = nargs|0;
-		start = start|0;
-		stop = stop|0;
-		step = step|0;
-		var numInts = 0;
-		var buflength = 0;
-		if ((nargs|0) < 3) {
-			step = 1;
-			if ((nargs|0) < 2) {
-				stop = start|0;
-				start = 0;
-			}
-		}
-		numInts = (_floorD(+((stop|0) - start|0) / +(step|0))|0)|0;
-		if  (((numInts|0) & 0x80000000) == 0) // positive numInts only
-		{ buflength = ((numInts|0) * 4)|0; }
-		return buflength|0;
-	}
 
-	
-	function rangeFill(nargs, buflength, start, stop, step) {
-		//alternatively we could pass computed args from 
-		nargs = nargs|0;
-		buflength = buflength|0;
-		start = start|0;
-		stop = stop|0;
-		step = step|0;
-		var numInts = 0;
-		var pos=0;
-		var val=0;
-		if ((nargs|0) < 3) {
-			step = 1;
-			if ((nargs|0) < 2) {
-				stop = start|0;
-				start = 0;
-			}
-		}
-		val = start|0;
-		while ((buflength|0) > 0) {
-			arr[pos >> 2] = val|0;
-			val = ((val|0) + step|0)|0;
-			pos = ((pos|0) + 4)|0;
-			if ((((start|0) < (stop|0)) & ((val|0) >= (stop|0))) |
-					(((start|0) > (stop|0)) & ((val|0) <= (stop|0)))){
-					break;
-			}
-		}
-	*/
-    function _floorD(dbl) {
-        dbl = +dbl;
+    f _floorD(d: dbl) {
         var cInt = 1;
         cInt = ~~+dbl | 0;
         if (+(cInt | 0) > +dbl) {
@@ -218,47 +159,33 @@ function _ASM_LScore(stdlib, foreign, heap) {
         }
         return cInt | 0;
     }
-    function _arrayEnvelope(offset, length, type) {
-        offset = offset | 0;
-        length = length | 0;
-        type = type | 0;
-        var thisOffset = 0;
+    f _arrayEnvelope(i: offset, i: length, i: type) {
+        int thisOffset;
         thisOffset = _malloc(3, INT32) | 0;
         memInt32[(thisOffset | 0) >> 2] = offset | 0;
         memInt32[(thisOffset | 0) + 4 >> 2] = length | 0;
         memInt32[(thisOffset | 0) + 8 >> 2] = type | 0;
         return thisOffset | 0;
     }
-    function _deAllocArr(offset, type) {
-        offset = offset | 0;
-        type = type | 0;
-        var sponge = 0;
+    f _deAllocArr(i: offset,i: type) {
+		int sponge;
         sponge = _free(offset | 0, type | 0) | 0;
     }
-    function _deAllocInfoloc(infoloc) {
-        infoloc = infoloc | 0;
-        var sponge = 0;
+    f _deAllocInfoloc(i: infoloc) {
+   		int sponge;
         sponge = _free(memInt32[(infoloc | 0) >> 2] | 0, memInt32[(infoloc | 0) + 8 >> 2] | 0) | 0;
         sponge = _free(infoloc | 0, 4) | 0;
     }
-	function _deAllocTypeless(offset) {
-		offset = offset | 0;
-		var type = 0;
-		var length = 0;
-		var sponge = 0;
+	f _deAllocTypeless(i: offset) {	
+		int type, sponge; 
 		offset = ((offset|0) - 8)|0;
 		type = (memInt32[(offset|0) >> 2])|0;
         sponge = _free(offset | 0, type | 0) | 0;
 	}
 
     //begin fcall
-    function _rangeSplitLength(nargstop, start, stop, step) {
-        nargstop = nargstop | 0;
-        start = start | 0;
-        stop = stop | 0;
-        step = step | 0;
-        var length = 0;
-        var bytelength = 0;
+    f _rangeSplitLength(i: nargstop,i: start,i: stop,i: step) {
+        int length, bytelength;
         if ((step | 0) == 0) {
             step = 1;
             if ((nargstop | 0) == 1) {
@@ -275,15 +202,8 @@ function _ASM_LScore(stdlib, foreign, heap) {
         bytelength = imul(length | 0, 4) | 0;
         return bytelength | 0;
     }
-    function _rangeSplit(bytelength, nargstop, start, stop, step) {
-        bytelength = bytelength | 0;
-		nargstop = nargstop | 0;
-        start = start | 0;
-        stop = stop | 0;
-        step = step | 0;
-        var pos = 0;
-        var val = 0;
-        var byteoffset = 0;
+    f _rangeSplit(i: bytelength,i: nargstop,i: start,i: stop,i: step) {
+		int pos=0, val, byteoffset;
         if ((step | 0) == 0) {
             step = 1;
             if ((nargstop | 0) == 1) {
@@ -302,17 +222,8 @@ function _ASM_LScore(stdlib, foreign, heap) {
     }
     // end fcall
     //begin heapview and fheap
-    function _rangeEnvelope(nargstop, start, stop, step) {
-        nargstop = nargstop | 0;
-        start = start | 0;
-        stop = stop | 0;
-        step = step | 0;
-        var pos = 0;
-        var val = 0;
-        var length = 0;
-        var bytelength = 0;
-        var byteoffset = 0;
-        var envelopeByteOffset = 0;
+    f _rangeEnvelope(i: nargstop,i: start,i: stop,i: step) {
+        int pos = 0, val, length, bytelength, byteoffset, envelopeByteOffset;
         if ((step | 0) == 0) {
             step = 1;
             if ((nargstop | 0) == 1) {
@@ -337,23 +248,21 @@ function _ASM_LScore(stdlib, foreign, heap) {
         envelopeByteOffset = _arrayEnvelope(byteoffset | 0, bytelength | 0, 4) | 0;
         return envelopeByteOffset | 0;
     }
-    function _getLength(infoloc) {
-        infoloc = infoloc | 0;
-		var length = 0;
+    f _getLength(i: infoloc) {
+		int length = 0;
 		length = (memInt32[((infoloc|0) + 4) >> 2])|0;
 		return length|0;
     }
-    function _getOffset(infoloc) {
-        infoloc = infoloc | 0;
-		var offset = 0;
+
+    f _getOffset(i: infoloc) {
+		int offset;
 		offset = (memInt32[(infoloc|0) >> 2])|0;
 		return offset|0;
     }
 
 	//begin f64
-	function _32Malloc(length) {
-		length = length|0;
-		var byteOffset = 0;
+	f _32Malloc(i: length) {
+		int byteOffset;
         byteOffset = _malloc(((length | 0) + 2)|0, 4) | 0;
 		memInt32[(byteOffset|0) >> 2] = 4;
 		memInt32[((byteOffset|0) + 4) >> 2] = imul(length|0,4)|0;
@@ -361,16 +270,8 @@ function _ASM_LScore(stdlib, foreign, heap) {
 		return byteOffset|0;
 	}
 
-    function _rangeTypeless(nargstop, start, stop, step) {
-        nargstop = nargstop | 0;
-        start = start | 0;
-        stop = stop | 0;
-        step = step | 0;
-        var pos = 0;
-        var val = 0;
-        var length = 0;
-        var bytelength = 0;
-        var byteOffset = 0;
+    f _rangeTypeless(i: nargstop, i: start, i: stop, i: step) {
+		int pos=0, val, length, bytelength, byteOffset;
 
 		//var envelopeByteOffset = 0;
         if ((step | 0) == 0) {
@@ -397,9 +298,8 @@ function _ASM_LScore(stdlib, foreign, heap) {
         return byteOffset | 0;
     }
 
-	function _getLengthTypeless(offset) {
-		offset = offset | 0;
-		var length = 0;
+	f _getLengthTypeless(i: offset) {
+		int length;
 		length = (memInt32[((offset|0)-4) >> 2])|0;
 		return length|0;
 	}
@@ -417,23 +317,52 @@ function _ASM_LScore(stdlib, foreign, heap) {
 		_getLengthTypeless : _getLengthTypeless,	//typeless
         _deAllocTypeless : _deAllocTypeless //typeless		
     };
-}
-;
-window.l_ = LScore(this, 4096 * 4096 * 32);
-window.testFuncs = {
-		"order": ["split","heapview", "fheap", "typeless"],
-		"funcs" : {
-       		'split': function () {
-            	window.l_.rangeSplit(50, 6000, 17);
-    	    },
-    	    'heapview': function () {
-    	        window.l_.rangeHeapview(50, 6000, 17);
-    	    },
-			'fheap' : function() {
-				window.l_.rangeFheap(50,6000,17);
-			},
-			'typeless': function() {
-				window.l_.rangeTypeless(50,6000,17);
-			}
+};
+
+l_ = LScore(this, 4096 * 4096 * 32);
+l_.bench = {
+	"Order": ["split","heapview", "fheap", "typeless"],
+	"Funcs" : {
+      	'split': function () {
+           	l_.rangeSplit(50, 6000, 17);
+    	},
+    	'heapview': function () {
+   	    	l_.rangeHeapview(50, 6000, 17);
+   		},
+		'fheap' : function() {
+			l_.rangeFheap(50,6000,17);
+		},
+		'typeless': function() {	
+			l_.rangeTypeless(50,6000,17);
+		},
+	}
+};
+l_.test = {
+		'require': "underscore";
+        'control': function(start, stop, step) 
+					{ return _.range(start,stop,step); },
+      	'funcs': [ l_.rangeSplit, 
+					l_.rangeHeapview,
+					l_.rangeFheap,
+					l_.rangeTypeless ];
+		'testcases': {
+			"no distance" : [1,1,1], //no distance
+			"zero step" : [1,2,0], //0 step
+			"decimal step" : [1,2,0.5],
+			"def.step, rpos. incr." : [1,10],
+			"def.step, rpos. decr." : [10,1],
+			"def.step, rneg. decr." : [-1,-10],
+			"def.step, rneg. incr.": [-10,-1],
+			"decr. step vs incr.": [1,10,-1],
+			"incr. step vs decr.": [10,1,1], 
+			">|1| step": [1,11,2],
+			">|1| step, miss end": [1,11,2],
+			"no stop arg": [40],
+			"up to ~int32 range": [0,2000000,100000],
+			"up to ~int32 range, 2k elements": 
+				[0,2000000,1000]
+		};
+		'typeless': function() {	
+			return (50,6000,17);
 		}
-    };
+};
