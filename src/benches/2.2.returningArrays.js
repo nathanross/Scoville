@@ -63,34 +63,34 @@ function Bench(stdlib) {
         var infoLoc = l_._rangeEnvelope(stop === undefined, start, stop, step);
         var arrInfo = new Int32Array(l_._heap, infoLoc, 2);
         var swe = new Int32Array(l_._heap,arrInfo[0],arrInfo[1] >> 2);
-        //=TEST var out= Array.apply([], swe);
+        //=SPEC var out= Array.apply([], swe);
         l_._deAllocInfoloc(infoLoc);
-        //=TEST return l_._getRange(out);
+        //=SPEC return l_._getRange(out);
     };
     l_.rangeSplit = function (start, stop, step) {
         var bytelength = l_._rangeSplitLength(stop === undefined, start, stop, step);
         var offset = l_._rangeSplit(bytelength, stop === undefined, start, stop, step);
    		var swe = new Int32Array(l_._heap,offset,bytelength); 
-        //=TEST var out= Array.apply([], swe);
+        //=SPEC var out= Array.apply([], swe);
         l_._deAllocArr(offset, 4);
-        //=TEST return l_._getRange(out);
+        //=SPEC return l_._getRange(out);
     };
     l_.rangeFheap = function (start, stop, step) {
         var infoLoc = l_._rangeEnvelope(stop === undefined, start, stop, step);
 		var bytelength = l_._getLength(infoLoc);
         var offset = l_._getOffset(infoLoc);
 		var swe = new Int32Array(l_._heap,offset,bytelength); 
-        //=TEST var out= Array.apply([], swe);
+        //=SPEC var out= Array.apply([], swe);
         l_._deAllocInfoloc(infoLoc);
-        //=TEST return l_._getRange(out);		
+        //=SPEC return l_._getRange(out);		
     };
     l_.rangeTypeless = function (start, stop, step) {
         var offset = l_._rangeTypeless(stop === undefined, start, stop, step);
         var bytelength = l_._getLengthTypeless(offset);
 		var swe = new Int32Array(l_._heap,offset,bytelength);
-        //=TEST var out= Array.apply([], swe);
+        //=SPEC var out= Array.apply([], swe);
         l_._deAllocTypeless(offset); 
-        //=TEST return l_._getRange(out);
+        //=SPEC return l_._getRange(out);
     };
     return l_;
 };
@@ -113,7 +113,7 @@ function _ASM_LScore(stdlib, foreign, heap) {
 						//1st is an i32 of type, 2nd is an i32 of length.
 
     //for now, pretend infinite memory.
-	
+  //%NOTHING%	
 	//%MALLOC%
     f _malloc(i: length, i: type) {
         int newPos, oldPos;

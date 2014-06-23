@@ -16,10 +16,16 @@
   ],
   "dependencies": {
   "grunt": "*",
+  "grunt-contrib-watch": "*",
+  "grunt-mkdir": "*",
+  "grunt-contrib-copy": "*",
+  "grunt-sweet.js": "*",
+  "minimalasm": "*",
+  "grunt-contrib-uglify": "*",
+  "grunt-contrib-clean": "*",
   "grunt-karma": "*",
   "karma": "*",
-  "karma-jasmine": "*",
-  "minimalasm": "*"
+  "karma-jasmine": "*"
   },
   "author": "Nathan Ross",
   "license": "Apache2",

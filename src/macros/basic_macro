@@ -1,0 +1,40 @@
+#!/bin/bash
+# extremely rudimentary preprocessor
+# syntax: ./simple_macro mode src_dir out_dir
+
+# for every javascript file in the source dir
+# copy it to the outdirectory after processing
+
+# processing:
+# any commented out js lines where they are commented out as so
+# //=SOMEMODE  for (var i=0;i....
+# the line is uncommented when SOMEMODE is passed as the mode.
+
+# any js line in the source file with this symbol
+# //%SOMESNIPPET%
+# has that text replaced with the content of macros/snippets/SOMESNIPPET
+
+# I thought about doing this script in nodejs, but this script
+# will only be used in this end-point package,
+# and this is the sort of package where more people reading it will
+# know bash than the nodejs correspondent of each tool here.
+
+
+srcdir=`readlink -m "$2"`
+outdir=`readlink -m "$3"`
+cd `dirname ${BASH_SOURCE[0]}`
+snippetdir=`readlink -m snippets`
+
+for f in `ls "${srcdir}/"`
+do
+        bench=`cat ${srcdir}/$f | sed -r "s/\/\/=$1\s//g"`
+        for sub in `echo -e "$bench" | grep -iE "//%[a-zA-Z_]+%" | sed -r "s/.*%([a-zA-Z_]+)%.*/\1/g"`
+        do
+                if [ -e "${snippetdir}/${sub}" ] 
+                then
+                        content=`cat "${snippetdir}/${sub}"`
+                        bench=`echo -e "$bench" | sed -r "s/\/\/%${sub}%/${content}/g"`
+                fi
+        done
+        echo -e "$bench" > "${outdir}/$f"
+done
