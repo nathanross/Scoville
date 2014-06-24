@@ -113,7 +113,7 @@ function _ASM_LScore(stdlib, foreign, heap) {
 						//1st is an i32 of type, 2nd is an i32 of length.
 
     //for now, pretend infinite memory.
-  //%NOTHING%	
+
 	//%MALLOC%
     f _malloc(i: length, i: type) {
         int newPos, oldPos;
@@ -338,13 +338,13 @@ l_.bench = {
 	}
 };
 l_.test = {
-		'require': "underscore";
+		'require': "underscore",
         'control': function(start, stop, step) 
 					{ return _.range(start,stop,step); },
       	'funcs': [ l_.rangeSplit, 
 					l_.rangeHeapview,
 					l_.rangeFheap,
-					l_.rangeTypeless ];
+					l_.rangeTypeless ],
 		'testcases': {
 			"no distance" : [1,1,1], //no distance
 			"zero step" : [1,2,0], //0 step
@@ -361,7 +361,7 @@ l_.test = {
 			"up to ~int32 range": [0,2000000,100000],
 			"up to ~int32 range, 2k elements": 
 				[0,2000000,1000]
-		};
+		},
 		'typeless': function() {	
 			return (50,6000,17);
 		}
