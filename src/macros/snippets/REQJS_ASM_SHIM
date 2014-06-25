@@ -1,0 +1,1 @@
+var stdlib = { Math: Math, Int8Array : Int8Array, Int16Array : Int16Array, Int32Array : Int32Array, Float32Array : Float32Array }

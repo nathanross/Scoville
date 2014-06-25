@@ -32,8 +32,9 @@ do
         do
                 if [ -e "${snippetdir}/${sub}" ] 
                 then
-                        content=`cat "${snippetdir}/${sub}"`
+                        content=`cat "${snippetdir}/${sub}"` 
                         bench=`echo -e "$bench" | sed -r "s/\/\/%${sub}%/${content}/g"`
+                        #bench=`echo -e "$bench" | sed -r "s/\/\/%${sub}%/${content}/g"`
                 fi
         done
         echo -e "$bench" > "${outdir}/$f"

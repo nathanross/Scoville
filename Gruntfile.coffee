@@ -28,7 +28,7 @@ module.exports = (grunt) ->
     sweetjs: 
       options: 
         modules : ["./node_modules/minimalasm/mnlasm.sjs"]
-        readableNames : true      
+        readableNames : true
       main: 
         src : "gen/2.modeprocess_done/*"
         dest : "gen/3.minimalasm_done/"      
@@ -64,7 +64,10 @@ module.exports = (grunt) ->
           "gen/*"] 
       # use complete or all when you've renamed or deleted a previously existing bench
       #all: 
-      
+    karma:
+      unit:
+        configFile: 'karma.conf.js'
+
   require('load-grunt-tasks')(grunt);
 
   # because we have a multi-step preprocessing chain
@@ -83,9 +86,9 @@ module.exports = (grunt) ->
   grunt.registerTask('compileSpecs',
         ['mkdir:gen', 'copy:all',
          'shell:modeSpec', 'clean:b_queued',
-  #      'sweetjs:doneSpec', 'clean:b_modeproc']);
-         'sweetjs:main', 'clean:b_modeproc',
-         'uglify:doneSpec', 'clean:b_sjs']);
+        'sweetjs:doneSpec', 'clean:b_modeproc']);
+  #       'sweetjs:main', 'clean:b_modeproc',
+  #       'uglify:doneSpec', 'clean:b_sjs']);
   grunt.registerTask('compilePerfs',
         ['mkdir:gen', 'copy:all',
          'shell:modePerf', 'clean:b_queued',
