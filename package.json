@@ -15,17 +15,6 @@
     "benchmarking"
   ],
   "dependencies": {
-    "grunt": "*",
-    "grunt-cli":"*",
-    "grunt-contrib-watch": "*",
-    "grunt-mkdir": "*",
-    "load-grunt-tasks": "*",
-    "grunt-shell": "*",
-    "grunt-contrib-copy": "*",
-    "grunt-sweet.js" : "*",
-    "grunt-contrib-uglify": "*",
-    "grunt-contrib-clean": "*",
-    "grunt-karma": "*",
     "gulp": "*",
     "gulp-mixotroph": "*",
     "gulp-sweetjs": "*",
