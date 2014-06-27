@@ -16,12 +16,16 @@
   ],
   "dependencies": {
     "grunt": "*",
+    "socket.io": "*",
+    "di": "*",
+    "grunt-cli":"*",
     "grunt-contrib-watch": "*",
     "grunt-mkdir": "*",
     "load-grunt-tasks": "*",
     "grunt-shell": "*",
     "grunt-contrib-copy": "*",
-    "grunt-sweet.js": "*",
+    "grunt-sweet.js" : "*",
+    "sweet.js": "*",
     "minimalasm": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-clean": "*",
@@ -31,9 +35,7 @@
     "karma-firefox-launcher": "*",
     "karma-requirejs": "*",
     "karma-phantomjs-launcher": "*",
-    "karma-jasmine": "*"
-  },
-  "devDependencies" : {
+    "karma-jasmine": "*",
     "underscore" : "*"
   },
   "author": "Nathan Ross",

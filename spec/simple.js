@@ -1,16 +1,15 @@
 
-Window._ = require("underscore");
-
 
 var cmp = {};
 cmp.Eq = function(a, b) {
   return a === b;
 };
 cmp.arrayEq = function(a, b) {
-  var maxLength = Math.max(a,b);
+  var maxLength = Math.max(a.length,b.length);
   for (var i=0;i<maxLength;i++) {
     if (i==a.length || i==b.length ||
-        (!(a[i] === b[i]))) { return false; }
+        (!(a[i] === b[i]))) { 
+      return false; }
   }
   return true;
 };
@@ -20,10 +19,10 @@ var deStructure = function(func, args) {
     case 0: 
       return func();
     case 1: 
-      return func(args[0]); 
+      return func(args[0]);
     case 2: 
       return func(args[0],args[1]); 
-    case 3:
+    case 3: 
       return func(args[0],args[1],args[2]); 
     case 4:
       return func(args[0],args[1],args[2],args[3]); 
@@ -33,8 +32,8 @@ var deStructure = function(func, args) {
 function testBench(bench) {  
   var test = bench.test;
   var c,i;
-  var makeCond = function() {
-    var r = function(cmpfunc, ctrl, func, args) {
+  var makeCond = function(cmpfunc, ctrl, func, args) {
+    var r = function() {
       expect(
         cmpfunc(
           ctrl,
@@ -51,8 +50,8 @@ function testBench(bench) {
   for (i=0; i<test.funcs.length; i++) {
     describe(test.funcs[i][0], function(){
       for (c=0; c<test.testcases.length; c++) {
-        it("behaves as expected with input: " + test.testcases[c][0], 
-          makeCallback(cmp[test.cmp], ctrlvals[c], 
+        it("matches control: " + test.testcases[c][0], 
+          makeCond(cmp[test.cmp], ctrlvals[c], 
                      test.funcs[i][1], test.testcases[c][1]));
       }
     });
