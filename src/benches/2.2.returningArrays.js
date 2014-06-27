@@ -68,34 +68,34 @@ function Bench(stdlib) {
     var infoLoc = l_._rangeEnvelope(stop === undefined, start, stop, step);
     var arrInfo = new Int32Array(l_._heap, infoLoc, 2);
     var swe = new Int32Array(l_._heap,arrInfo[0],arrInfo[1]);
-    //=SPEC var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
+    //=SPEC= var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
     l_._deAllocInfoloc(infoLoc);
-    //=SPEC return out;
+    //=SPEC= return out;
   };
   l_.rangeSplit = function (start, stop, step) {
     var length = l_._rangeSplitLength(stop === undefined, start, stop, step);
     var offset = l_._rangeSplit(length, stop === undefined, start, stop, step);
     var swe = new Int32Array(l_._heap,offset,length); 
-    //=SPEC var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
+    //=SPEC= var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
     l_._deAllocArr(offset, 4);
-    //=SPEC return out;
+    //=SPEC= return out;
   };
   l_.rangeFheap = function (start, stop, step) {
     var infoLoc = l_._rangeEnvelope(stop === undefined, start, stop, step);
     var length = l_._getLength(infoLoc);
     var offset = l_._getOffset(infoLoc);
     var swe = new Int32Array(l_._heap,offset,length); 
-    //=SPEC var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
+    //=SPEC= var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
     l_._deAllocInfoloc(infoLoc);
-    //=SPEC return out;		
+    //=SPEC= return out;		
   };
   l_.rangeTypeless = function (start, stop, step) {
     var offset = l_._rangeTypeless(stop === undefined, start, stop, step);
     var length = l_._getLengthTypeless(offset);
     var swe = new Int32Array(l_._heap,offset,length);
-    //=SPEC var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
+    //=SPEC= var out= (swe.length !== 1)? Array.apply([], swe) : [swe[0]];
     l_._deAllocTypeless(offset); 
-    //=SPEC return out;
+    //=SPEC= return out;
   };
   return l_;
 };
