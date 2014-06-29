@@ -9,13 +9,13 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine'],
+    frameworks: ['bench'],
 
     // list of files / patterns to load in the browser
     files: [
     //    require.resolve('underscore'),
       'gen/spec/*',
-      'spec/simple.js'
+      'bench/general.js'
     ],
 
     // list of files to exclude
@@ -30,7 +30,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['spec'],
+    reporters: ['benchmark'],
 
     // web server port
     port: 9876,
