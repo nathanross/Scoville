@@ -37,28 +37,14 @@
 //					of padded array given offset of first element.
 //
 
-// performance results : for small arrays of about 10 items, where the difference
-//	is among the most pronounced, typeless wins in performance by about 10-12%
-//	over heapview and fheap, with split generally coming in a few points slower
-//	than typeless. In general, I recommend typeless.
 
-//requirements to build:
-// scoville preprocessor to add malloc (and uncomment for different modes)
-// minimalasm sweet.js macros
-//	sweet.js (obviously)
-// require
-if (window.benches === undefined) {
-  window.benches = [];
-}
+//%BENCH_START%
 
-window.benches.push(["",(function(std) {
 
-'use strict';
-function Bench(stdlib) {
-    var heap = new ArrayBuffer(4096 * 4096 * 32);
-    var l_ = _ASM_LScore(stdlib, {}, heap);
-    //l_._initRandom(stdlib);
-    l_._heap = heap;
+  var heap = new ArrayBuffer(4096 * 4096 * 32);
+  var l_ = _ASM_Bench(stdlib, {}, heap);
+  //l_._initRandom(stdlib);
+  l_._heap = heap;
   l_._getRange = function(offset, length) {
     var swe = new Int32Array(l_._heap,offset,length);
     var out = Array.apply([],swe);
@@ -97,37 +83,10 @@ function Bench(stdlib) {
     l_._deAllocTypeless(offset); 
     //=SPEC= return out;
   };
-  return l_;
-};
 
-function _ASM_LScore(stdlib, foreign, heap) {
-  'use asm';
-  var imul = stdlib.Math.imul;
-  var memInt8 = new stdlib.Int8Array(heap);
-  var memInt16 = new stdlib.Int16Array(heap);
-  var memInt32 = new stdlib.Int32Array(heap);
-  var memFloat32 = new stdlib.Float32Array(heap);
-  var cursor = 0;
-  var INT32 = 4;
-  var INT16 = 2;
-  var INI8 = 1;
-  var UINT16 = 2;
-  var UINT8 = 1;
-  var FLOAT32 = 4;
-  var EXTRA_INT32 =2;	//every array gets eight xtra bytes
-  //1st is an i32 of type, 2nd is an i32 of length.
-  //for now, pretend infinite memory.
+//%BENCH_ASM_BEGIN%
+//%ARRAY_BPLATE%
 //%MALLOC%
-  f _malloc(i: length, i: type) {
-    int newPos, oldPos;
-    newPos = (cursor | 0) + (imul(length | 0, 4) | 0) | 0;
-    oldPos = cursor | 0;
-    cursor = newPos | 0;
-    return oldPos | 0;
-  }
-  f _free(i: offset,i: type) {
-    return 1;
-  }
 
     /*
   function _rndDbl() {
@@ -141,14 +100,14 @@ return +ratio;
 
   function random(min, max) {
 //TODO fix rndval==RANDMAX bug.
-min = min|0;
-max = max|0;
+min = min`;
+max = max`;
 var rndint = 0;
-if ((max|0) == 0) { max = min; min = 0; }
+if ((max`) == 0) { max = min; min = 0; }
 // rndint = min + _floorD(_rndDbl() * ((max+1)-min))
-rndint = (min|0) + (_floorD(+_rndDbl() * +((max|0 + 1) - min|0))|0)|0;    
-//rndint = (min|0) + (_floorD(+rndval * +((max|0 + 1) - min|0))|0)|0;
-return rndint|0;
+rndint = (min`) + (_floorD(+_rndDbl() * +((max` + 1) - min`))`)`;    
+//rndint = (min`) + (_floorD(+rndval * +((max` + 1) - min`))`)`;
+return rndint`;
   }
 */
     //start is optional, step is optional
@@ -156,158 +115,158 @@ return rndint|0;
 
   f _floorD(d: dbl) {
     var cInt = 1;
-    cInt = ~~+dbl | 0;
-    if (+(cInt | 0) > +dbl) {
-      cInt = cInt|0 - 1;
+    cInt = ~~+dbl`;
+    if (+(cInt`) > +dbl) {
+      cInt = cInt` - 1;
     }
 //    return 1;
-    return cInt | 0;
+    return cInt`;
   }
   f _arrayEnvelope(i: offset, i: length, i: type) {
     int thisOffset;
-    thisOffset = _malloc(3, INT32) | 0;
-    memInt32[(thisOffset | 0) >> 2] = offset | 0;
-    memInt32[(thisOffset | 0) + 4 >> 2] = length | 0;
-    memInt32[(thisOffset | 0) + 8 >> 2] = type | 0;
-    return thisOffset | 0;
+    thisOffset = _malloc(3, SI32)`;
+    i32[(thisOffset`) >> 2] = offset`;
+    i32[(thisOffset`) + 4 >> 2] = length`;
+    i32[(thisOffset`) + 8 >> 2] = type`;
+    return thisOffset`;
   }
   f _deAllocArr(i: offset,i: type) {
   int sponge;
-    sponge = _free(offset | 0, type | 0) | 0;
+    sponge = _free(offset`, type`)`;
   }
   f _deAllocInfoloc(i: infoloc) {
     int sponge;
-    sponge = _free(memInt32[(infoloc | 0) >> 2] | 0, memInt32[(infoloc | 0) + 8 >> 2] | 0) | 0;
-    sponge = _free(infoloc | 0, 4) | 0;
+    sponge = _free(i32[(infoloc`) >> 2]`, i32[(infoloc`) + 8 >> 2]`)`;
+    sponge = _free(infoloc`, 4)`;
   }
   f _deAllocTypeless(i: offset) {
     int type, sponge; 
-    offset = ((offset|0) - 8)|0;
-    type = (memInt32[(offset|0) >> 2])|0;
-    sponge = _free(offset | 0, type | 0) | 0;
+    offset = ((offset`) - 8)`;
+    type = (i32[(offset`) >> 2])`;
+    sponge = _free(offset`, type`)`;
   }
   
   //begin fcall
   f _rangeSplitLength(i: nargstop,i: start,i: stop,i: step) {
     int length, bytelength;
-    if ((step | 0) == 0) {
+    if ((step`) == 0) {
       step = 1;
-      if ((nargstop | 0) == 1) {
-        stop = start | 0;
+      if ((nargstop`) == 1) {
+        stop = start`;
         start = 0;
       }
     }
-    length = _floorD(+((stop | 0) - start | 0) / +(step | 0)) | 0;
-    if (((length | 0) & 0x80000000) != 0)
+    length = _floorD(+((stop`) - start`) / +(step`))`;
+    if (((length`) & 0x80000000) != 0)
     // positive numInts only
     {
       length = 0;
     }
-    //bytelength = imul(length | 0, 4) | 0;
-    return length | 0;
+    //bytelength = imul(length`, 4)`;
+    return length`;
   }
   f _rangeSplit(i: length,i: nargstop,i: start,i: stop,i: step) {
     int pos=0, val, byteoffset, bytelength;
-    bytelength = imul((length|0),4)|0;
-    if ((step | 0) == 0) {
+    bytelength = imul((length`),4)`;
+    if ((step`) == 0) {
       step = 1;
-      if ((nargstop | 0) == 1) {
-        stop = start | 0;
+      if ((nargstop`) == 1) {
+        stop = start`;
         start = 0;
       }
     }
-    val = start|0;
-    byteoffset = _malloc((bytelength | 0) >> 2, INT32) | 0;
-    while ((pos | 0) < (bytelength | 0)) {
-      memInt32[((byteoffset | 0) + pos | 0) >> 2] = val | 0;
-      val = (val | 0) + step | 0 | 0;
-      pos = (pos | 0) + 4 | 0;
+    val = start`;
+    byteoffset = _malloc((bytelength`) >> 2, SI32)`;
+    while ((pos`) < (bytelength`)) {
+      i32[((byteoffset`) + pos`) >> 2] = val`;
+      val = (val`) + step`;
+      pos = (pos`) + 4`;
     }
-    //return val | 0;
-    return byteoffset | 0;
+    //return val`;
+    return byteoffset`;
   }
   // end fcall
   //begin heapview and fheap
   f _rangeEnvelope(i: nargstop,i: start,i: stop,i: step) {
     int pos = 0, val, length, bytelength, byteoffset, envelopeByteOffset;
-    if ((step | 0) == 0) {
+    if ((step`) == 0) {
       step = 1;
-      if ((nargstop | 0) == 1) {
-        stop = start | 0;
+      if ((nargstop`) == 1) {
+        stop = start`;
         start = 0;
       }
     }
-    val = start | 0;
-    length = _floorD(+((stop | 0) - start | 0) / +(step | 0)) | 0;
-    if (((length | 0) & 0x80000000) != 0)
+    val = start`;
+    length = _floorD(+((stop`) - start`) / +(step`))`;
+    if (((length`) & 0x80000000) != 0)
     // positive numInts only
     {
       length = 0;
     }
-    bytelength = imul(length | 0, 4) | 0;
-    byteoffset = _malloc(length | 0, INT32) | 0;
-    while ((pos | 0) < (bytelength | 0)) {
-      memInt32[((byteoffset | 0) + pos | 0) >> 2] = val | 0;
-      val = (val | 0) + step | 0 | 0;
-      pos = (pos | 0) + 4 | 0;
+    bytelength = imul(length`, 4)`;
+    byteoffset = _malloc(length`, SI32)`;
+    while ((pos`) < (bytelength`)) {
+      i32[((byteoffset`) + pos`) >> 2] = val`;
+      val = (val`) + step`;
+      pos = (pos`) + 4`;
     }
-    envelopeByteOffset = _arrayEnvelope(byteoffset | 0, length | 0, 4) | 0;
-    return envelopeByteOffset | 0;
+    envelopeByteOffset = _arrayEnvelope(byteoffset`, length`, 4)`;
+    return envelopeByteOffset`;
   }
   f _getLength(i: infoloc) {
     int length = 0;
-    length = (memInt32[((infoloc|0) + 4) >> 2])|0;
-    return length|0;
+    length = (i32[((infoloc`) + 4) >> 2])`;
+    return length`;
   }
   
   f _getOffset(i: infoloc) {
     int offset;
-    offset = (memInt32[(infoloc|0) >> 2])|0;
-    return offset|0;
+    offset = (i32[(infoloc`) >> 2])`;
+    return offset`;
   }
   
   //begin f64
   f _32Malloc(i: length) {
     int byteOffset;
-    byteOffset = _malloc(((length | 0) + 2)|0, 4) | 0;
-    memInt32[(byteOffset|0) >> 2] = 4;
-    memInt32[((byteOffset|0) + 4) >> 2] = length|0;
-    byteOffset = ((byteOffset|0) + 8)|0;
-    return byteOffset|0;
+    byteOffset = _malloc(((length`) + 2)`, 4)`;
+    i32[(byteOffset`) >> 2] = 4;
+    i32[((byteOffset`) + 4) >> 2] = length`;
+    byteOffset = ((byteOffset`) + 8)`;
+    return byteOffset`;
   }
   
   f _rangeTypeless(i: nargstop, i: start, i: stop, i: step) {
     int pos=0, val, length, bytelength, byteOffset;
     
     //var envelopeByteOffset = 0;
-    if ((step | 0) == 0) {
+    if ((step`) == 0) {
       step = 1;
-      if ((nargstop | 0) == 1) {
-        stop = start | 0;
+      if ((nargstop`) == 1) {
+        stop = start`;
         start = 0;
       }
     }
-    val = start | 0;
-    length = _floorD(+((stop | 0) - start | 0) / +(step | 0)) | 0;
-    if (((length | 0) & 0x80000000) != 0)
+    val = start`;
+    length = _floorD(+((stop`) - start`) / +(step`))`;
+    if (((length`) & 0x80000000) != 0)
     // positive numInts only
     {
       length = 0;
     }
-    bytelength = imul(length | 0, 4) | 0;
-    byteOffset = _32Malloc(length|0) | 0; 
-    while ((pos | 0) < (bytelength | 0)) {
-      memInt32[((byteOffset | 0) + pos | 0) >> 2] = val | 0;
-      val = (val | 0) + step | 0 | 0;
-      pos = (pos | 0) + 4 | 0;
+    bytelength = imul(length`, 4)`;
+    byteOffset = _32Malloc(length`)`; 
+    while ((pos`) < (bytelength`)) {
+      i32[((byteOffset`) + pos`) >> 2] = val`;
+      val = (val`) + step`;
+      pos = (pos`) + 4`;
     }
-    return byteOffset | 0;
+    return byteOffset`;
   }
   
 f _getLengthTypeless(i: offset) {
   int length;
-  length = (memInt32[((offset|0)-4) >> 2])|0;
-  return length|0;
+  length = (i32[((offset`)-4) >> 2])`;
+  return length`;
 }
   
   return {
@@ -323,9 +282,9 @@ f _getLengthTypeless(i: offset) {
     _getLengthTypeless : _getLengthTypeless,//typeless
     _deAllocTypeless : _deAllocTypeless //typeless
   };
-};
 
-var l_ = Bench(std);
+//%BENCH_ASM_END%
+
 l_.name = "returningArrays";
 l_.bench = [
   //necessary to have dedicated functions 
@@ -346,7 +305,6 @@ l_.bench = [
     }]]
 ];
 l_.test = {
-  'require': "underscore",
   'control': function(start, stop, step) { 
     //like underscores range(), but no arguments length check
     //which allows it to be called generically.
@@ -392,8 +350,4 @@ l_.test = {
     ]
 };
 
-return l_  })(this) //end anonymous function
-
-]); //end window.benches.add()
-
-window.benches[window.benches.length-1][0] = window.benches[window.benches.length-1][1].name;
+//%BENCH_END%

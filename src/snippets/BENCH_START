@@ -1,0 +1,8 @@
+if (window.benches === undefined) {
+  window.benches = [];
+}
+
+window.benches.push(["",(function(std) {
+
+'use strict';
+function Bench(stdlib) {

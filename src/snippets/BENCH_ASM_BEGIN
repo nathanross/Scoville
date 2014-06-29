@@ -1,0 +1,5 @@
+  return l_;
+};
+
+function _ASM_Bench(stdlib, foreign, heap) {
+  'use asm';

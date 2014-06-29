@@ -3,10 +3,12 @@ var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var sweetjs = require('gulp-sweetjs');
 var mixotroph = require('gulp-mixotroph');
+var mnlasm = require('minimalasm');
 
 function compileCore(mode) {
   return gulp.src("src/benches/*.js")
       .pipe(mixotroph({mode:"SPEC",snippetdir:"src/macros/snippets"}))
+      .pipe(mnlasm({}))
       .pipe(sweetjs({modules: ['./node_modules/minimalasm/mnlasm.sjs'], readableNames: true}));
 }
 

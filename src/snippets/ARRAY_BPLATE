@@ -1,0 +1,12 @@
+var imul = stdlib.Math.imul;
+var i8 = new stdlib.Int8Array(heap);
+var i16 = new stdlib.Int16Array(heap);
+var i32 = new stdlib.Int32Array(heap);
+var f32 = new stdlib.Float32Array(heap);
+var cursor = 0;
+var SI32 = 4;
+var SI16 = 2;
+var SI8 = 1;
+var SUI16 = 2;
+var SUI8 = 1;
+var SF32 = 4;

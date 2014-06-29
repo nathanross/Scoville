@@ -1,0 +1,11 @@
+f _malloc(i: length, i: type) {
+  int newPos, oldPos;
+  newPos = (cursor`) + (imul(length`, 4)`)`;
+  oldPos = cursor`;
+  cursor = newPos`;
+  return oldPos`;
+}
+
+f _free(i: offset,i: type) {
+  return 1;
+}

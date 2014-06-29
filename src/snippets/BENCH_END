@@ -1,0 +1,6 @@
+
+return l_  })(this) //end anonymous function
+
+]); //end window.benches.add()
+
+window.benches[window.benches.length-1][0] = window.benches[window.benches.length-1][1].name;
