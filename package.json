@@ -19,6 +19,7 @@
     "gulp-mixotroph": "*",
     "gulp-sweetjs": "*",
     "gulp-uglify": "*",
+    "gulp-clean": "*",
     "through2":"*",
     "sweet.js": "*",
     "minimalasm": "*",

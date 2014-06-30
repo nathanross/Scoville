@@ -37,15 +37,17 @@ function testBench(bench) {
       expect(
         cmpfunc(
           ctrl,
-          deStructure(func, args)
+          (typeof(args) == "function")? args(func) : deStructure(func, args)
         )
       ).toBe(true);
     };
     return r;
   };
   ctrlvals = {};
+
   for (c=0; c<test.testcases.length; c++) {
-    ctrlvals[c] = deStructure(test.control, test.testcases[c][1])
+    ctrlvals[c] = (typeof(test.control) == "function")? 
+      deStructure(test.control, test.testcases[c][1]) : test.control;
   }
   for (i=0; i<test.funcs.length; i++) {
     describe(test.funcs[i][0], function(){

@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 //var argv = require('yargs').argv;
 var uglify = require('gulp-uglify');
+var clean = require('gulp-clean');
 var sweetjs = require('gulp-sweetjs');
 var mixotroph = require('gulp-mixotroph');
 var mnlasm = require('minimalasm');
@@ -22,7 +23,7 @@ gulp.task("compileSpecsMin", function() {
 
 gulp.task('compilePerf', function() {
   return compileCore("PERF").pipe(uglify())
-    .pipe(gulp.dest("gen/spec"));
+    .pipe(gulp.dest("gen/perf"));
 });
 
 gulp.task('cleanSpecs', function() {
