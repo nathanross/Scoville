@@ -1,15 +1,28 @@
-
-
 function runBench(bench) {  
   var cases = bench.bench;
   var c,i;
-  for (c=0; c<cases.length; c++) {
-    suite(cases[i][0], function(){
+  
+  var makeBenchCallback = function(ca){
+    return function() {      
       for (i=0; i<cases[c][1].length; i++) {
+
         impl = cases[c][1][i];
+        console.log(cases[c][1][i][0] );
         benchmark(impl[0], impl[1]); 
       }
-    });
+    }
+  } 
+
+  for (c=0; c<cases.length; c++) {
+
+    suite(cases[c][0], makeBenchCallback(c));
+          /* function(){
+      for (i=0; i<(cases[c][1]).length; i++) {
+        impl = cases[c][1][i];
+        console.log(cases[c][1]);
+        benchmark(impl[0], impl[1]); 
+      }
+    }); */
   }  
 };
 

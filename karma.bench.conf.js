@@ -9,12 +9,12 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['bench'],
+    frameworks: ['benchmark'],
 
     // list of files / patterns to load in the browser
     files: [
     //    require.resolve('underscore'),
-      'gen/spec/*',
+      'gen/perf/*',
       'bench/general.js'
     ],
 

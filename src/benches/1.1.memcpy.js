@@ -95,17 +95,19 @@ l_.bench = [
   //necessary to have dedicated functions 
   //because destructuring for every call can greatly
   //affect performance, and thus comparison.
-  ['non-overlapping',
-    ['impl1', function () {
-      l_.memcpyEmsc(5000, 0, 4999);
-      l_.memcpyEmsc(20000, 10000, 9999);
-      l_.memcpyEmsc(50000, 30000, 19999); 
-    }],
-    ['impl2', function () {
-      l_.memcpyEmscExp(5000, 0, 4999);
-      l_.memcpyEmscExp(20000, 10000, 9999);
-      l_.memcpyEmscExp(50000, 30000, 19999); 
-    }]
+  ['non-overlapping regions', 
+    [
+      ['impl1', function () {
+        l_.memcpyEmsc(5000, 0, 4999);
+        l_.memcpyEmsc(20000, 10000, 9999);
+        l_.memcpyEmsc(50000, 30000, 19999); 
+      }]
+      /*,['impl2', function () {
+        l_.memcpyEmscExp(5000, 0, 4999);
+        l_.memcpyEmscExp(20000, 10000, 9999);
+        l_.memcpyEmscExp(50000, 30000, 19999); 
+      }] */
+    ]
   ]
 ];
 l_.test = {
@@ -133,7 +135,8 @@ l_.test = {
        function(impl) { 
          l_.seti8(2502,0);
          l_.seti8(2002,1);
-         impl(2501, 2001, 498);
+         implls
+(2501, 2001, 498);
          return l_.geti8(2502);
        }] //0 step
     ]

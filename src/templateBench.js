@@ -29,12 +29,14 @@ l_.bench = [
   //because destructuring for every call can greatly
   //affect performance, and thus comparison.
   ['benchname',
-    ['impl1', function () {
-      l_.rangeSplit(50, 6000, 17);
-    }],
-    ['impl2', function () {
-     l_.rangeHeapview(50, 6000, 17);
-    }]
+    [
+      ['impl1', function () {
+        l_.rangeSplit(50, 6000, 17);
+      }]
+      ,['impl2', function () {
+        l_.rangeHeapview(50, 6000, 17);
+      }]
+    ]
   ]
 ];
 l_.test = {
@@ -45,10 +47,11 @@ l_.test = {
   'funcs' : [
       ['impl1', l_.impl1], 
       ['impl2', l_.impl2]
+  ],
   'testcases': [
       ["some case", [1,1,1]], //no distance
       ["other case", [2,3,1]] //0 step
-    ]
+  ]
 };
 
 //%BENCH_END%

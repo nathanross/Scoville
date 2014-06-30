@@ -30,7 +30,8 @@
     "karma-phantomjs-launcher": "*",
     "karma-jasmine": "*",
     "karma-benchmark": "*",
-   " underscore" : "*"
+    "karma-benchmark-reporter": "*",
+    "underscore" : "*"
   },
   "author": "Nathan Ross",
   "license": "Apache2",

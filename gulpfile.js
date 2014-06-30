@@ -22,7 +22,8 @@ gulp.task("compileSpecsMin", function() {
 });
 
 gulp.task('compilePerf', function() {
-  return compileCore("PERF").pipe(uglify())
+  return compileCore("PERF")
+    //.pipe(uglify())
     .pipe(gulp.dest("gen/perf"));
 });
 
