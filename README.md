@@ -3,8 +3,6 @@ scoville
 
 asm.js pattern benchmarks.
 
-##Habamacro
-
-Set of Sweet.js javascript macros to clean up js development.
+Makes use of Minimalasm, a set of Sweet.js javascript macros for more readable asmjs.
 
 Work in progress.
